@@ -1,0 +1,32 @@
+{
+  "name": "verdant-platform",
+  "private": true,
+  "version": "2.0.0",
+  "description": "花草產品體系控制台：即時狀態、指定啟動服務。前端 React+TS+Tailwind+Zustand+TanStack Query，後端零依賴 Node。",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc -b && vite build",
+    "preview": "vite preview",
+    "start": "node server/server.js",
+    "dev:all": "node scripts/dev.mjs"
+  },
+  "dependencies": {
+    "@tanstack/react-query": "^5.51.0",
+    "@types/three": "^0.185.1",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "three": "^0.185.1",
+    "zustand": "^4.5.4"
+  },
+  "devDependencies": {
+    "@types/react": "^18.3.3",
+    "@types/react-dom": "^18.3.0",
+    "@vitejs/plugin-react": "^4.3.1",
+    "autoprefixer": "^10.4.19",
+    "postcss": "^8.4.39",
+    "tailwindcss": "^3.4.7",
+    "typescript": "^5.5.4",
+    "vite": "^5.3.5"
+  }
+}

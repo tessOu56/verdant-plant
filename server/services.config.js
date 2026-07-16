@@ -1,0 +1,18 @@
+export default [
+  { id:'garden', name:'共享花園（即時）', port:4101, script:'server/garden-service.js', accent:'#63a844',
+    tags:['WebSocket','即時資料流','斷線重連','樂觀更新','TanStack Query'],
+    role:'展現：即時資料流與低延遲同步、樂觀 UI。',
+    desc:'多人共享花園，伺服器每 6 秒隨機一株綻放並持續推播生長；前端 WebSocket 即時接收，含心跳重連與樂觀澆水。' },
+  { id:'bloom', name:'花朵綻放', port:4102, script:'server/bloom-service.js', accent:'#ec4899',
+    tags:['Canvas','requestAnimationFrame','60fps','弱裝置降階'],
+    role:'展現：重度動畫與像素級渲染、效能降階。',
+    desc:'Canvas 花朵以固定時間步長主迴圈生長、花瓣緩動綻放、花粉粒子；可切低配裝置模式觀察降階。' },
+  { id:'meadow', name:'花圃效能實驗室', port:4103, script:'server/meadow-service.js', accent:'#a78bfa',
+    tags:['虛擬列表','記憶體洩漏','FPS 監測','DOM diffing'],
+    role:'展現：DOM 渲染、記憶體洩漏、極端效能優化。',
+    desc:'5 萬株花圃：全量渲染 vs 虛擬列表的 FPS 對比，內建記憶體洩漏製造/修復與即時 FPS 儀表。' },
+  { id:'scene', name:'3D 花園場景', port:4104, script:'server/scene-service.js', accent:'#14b8a6',
+    tags:['Three.js','WebGL','3D 渲染','OrbitControls','資源釋放'],
+    role:'展現：WebGL 3D 場景與互動相機（nice-to-have）。',
+    desc:'Three.js 程序化花田，OrbitControls 互動相機、風吹搖曳動畫；離開頁面釋放 GPU 資源避免 WebGL 洩漏。' },
+];
