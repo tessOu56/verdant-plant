@@ -32,8 +32,16 @@ npm run dev:all
 
 Vite 已設定 proxy，把 `/api` 與 `/ws` 轉發到 4000，所以在 5173 開發控制台時即時狀態照常運作。要體驗某個服務的即時畫面，在控制台按「啟動」後用「開啟 ↗」進入其埠號（服務頁由 `dist` 提供，改動服務頁原始碼後 `npm run build` 更新）。
 
-其他腳本：`npm run dev`（只開 Vite）、`npm run build`（重建 dist）、`npm start`（只跑後端）。
+其他腳本：`npm run dev`（只開 Vite）、`npm run build`（重建 dist）、`npm start`（只跑後端）、`npm run demo:atelier`（離線 Atelier）、`npm run build:app`（Capacitor sync）。
 
+### C. Atelier 離線 Web demo（不需 Node API）
+
+```bash
+npm run demo:atelier
+# 或 npm run build 後開啟 dist/atelier.html（靜態伺服器即可）
+```
+
+預設 **local** 模式：配方引擎在瀏覽器跑、庫存寫入 `localStorage`。遠端第五站加 `?api=1`。跨平台 App 與靜態託管見 [`docs/ATELIER-APP.md`](docs/ATELIER-APP.md)。
 ## 架構
 
 ```
@@ -57,9 +65,9 @@ Vite 已設定 proxy，把 `/api` 與 `/ws` 轉發到 4000，所以在 5173 開�
 | 花朵綻放 | 重度動畫、像素級渲染、效能降階 | Canvas + `requestAnimationFrame` 固定時間步長主迴圈、花瓣緩動綻放、花粉粒子、低配裝置模式（Zustand 控制、降 30fps／關粒子） |
 | 花圃效能實驗室 | DOM 渲染、記憶體洩漏、極端優化 | 5 萬株花圃的虛擬列表 vs 全量渲染 FPS 對比、即時 FPS 儀表、記憶體洩漏製造/修復示範 |
 | 3D 花園場景 | WebGL 3D 渲染、互動相機 | Three.js 程序化花田、OrbitControls 拖曳縮放、風吹搖曳動畫、低多邊形降階、離開頁面釋放 geometry/material/renderer 避免 WebGL 洩漏 |
-| 鍊金工坊 Atelier | 跨主題領域模型、可解釋科學 | `shared/atelier` Substance／Recipe seed、Zod 契約、純函式 RecipeEngine（`floor(qty×yield)`）、REST craft／庫存、示意圖 UI |
+| 鍊金工坊 Atelier | 跨主題領域模型、可解釋科學、離線 demo／Capacitor | `shared/atelier` seed＋RecipeEngine、Zod＋Vitest、localStorage client-first、示意圖 UI、`?api=1` 遠端、Capacitor `dist-app` |
 
-Atelier 測試：`npm test`（Vitest）。
+Atelier 測試：`npm test`（Vitest）。App／部署：[`docs/ATELIER-APP.md`](docs/ATELIER-APP.md)。
 
 ## 技術棧在哪裡看
 
