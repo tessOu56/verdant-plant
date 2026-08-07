@@ -1,0 +1,593 @@
+[
+  {
+    "id": "smelt_copper",
+    "domain": "alchemy",
+    "name": {
+      "zh": "銅的還原冶煉",
+      "en": "Copper reduction smelting"
+    },
+    "station": "furnace",
+    "process": "smelt_reduce",
+    "inputs": [
+      {
+        "substanceId": "malachite",
+        "qty": 2
+      },
+      {
+        "substanceId": "charcoal",
+        "qty": 1
+      }
+    ],
+    "outputs": [
+      {
+        "substanceId": "copper_metal",
+        "qty": 2,
+        "yield": 0.85
+      }
+    ],
+    "durationSec": 12,
+    "heat": "high",
+    "science": {
+      "summary": "高溫下碳（或 CO）把銅礦中的 Cu(II) 還原成金屬銅；碳酸鹽同時分解放出 CO₂。",
+      "mechanisms": [
+        "reduction",
+        "thermal_decomposition"
+      ],
+      "keywords": [
+        "smelting",
+        "Ellingham",
+        "malachite → Cu"
+      ],
+      "approxRealism": "simplified_stoichiometry"
+    },
+    "icon": "flow-ore-to-metal"
+  },
+  {
+    "id": "smelt_tin",
+    "domain": "alchemy",
+    "name": {
+      "zh": "錫石還原",
+      "en": "Cassiterite reduction"
+    },
+    "station": "furnace",
+    "process": "smelt_reduce",
+    "inputs": [
+      {
+        "substanceId": "cassiterite",
+        "qty": 2
+      },
+      {
+        "substanceId": "charcoal",
+        "qty": 1
+      }
+    ],
+    "outputs": [
+      {
+        "substanceId": "tin_metal",
+        "qty": 2,
+        "yield": 0.8
+      }
+    ],
+    "durationSec": 14,
+    "heat": "high",
+    "science": {
+      "summary": "SnO₂ 在還原氣氛中被還原為 Sn；歷史上錫與銅合鑄為青銅。",
+      "mechanisms": [
+        "reduction"
+      ],
+      "keywords": [
+        "cassiterite",
+        "tin smelting"
+      ],
+      "approxRealism": "simplified_stoichiometry"
+    },
+    "icon": "flow-ore-to-metal"
+  },
+  {
+    "id": "alloy_bronze",
+    "domain": "alchemy",
+    "name": {
+      "zh": "青銅合鑄",
+      "en": "Bronze alloying"
+    },
+    "station": "furnace",
+    "process": "alloy",
+    "inputs": [
+      {
+        "substanceId": "copper_metal",
+        "qty": 9
+      },
+      {
+        "substanceId": "tin_metal",
+        "qty": 1
+      }
+    ],
+    "outputs": [
+      {
+        "substanceId": "bronze",
+        "qty": 10,
+        "yield": 0.95
+      }
+    ],
+    "durationSec": 8,
+    "heat": "medium_high",
+    "science": {
+      "summary": "熔融混合形成固溶／金屬間相；適量錫提高硬度與鑄造性（金工直接相關）。",
+      "mechanisms": [
+        "alloying",
+        "phase_diagram"
+      ],
+      "keywords": [
+        "Cu-Sn phase diagram",
+        "bronze age metallurgy"
+      ],
+      "approxRealism": "ratio_gameplay_not_exact_wt_pct"
+    },
+    "icon": "flow-blend-metals"
+  },
+  {
+    "id": "calcine_lime",
+    "domain": "alchemy",
+    "name": {
+      "zh": "石灰煅燒",
+      "en": "Lime calcination"
+    },
+    "station": "furnace",
+    "process": "calcine",
+    "inputs": [
+      {
+        "substanceId": "limestone",
+        "qty": 1
+      }
+    ],
+    "outputs": [
+      {
+        "substanceId": "quicklime",
+        "qty": 2,
+        "yield": 0.9
+      }
+    ],
+    "durationSec": 10,
+    "heat": "high",
+    "science": {
+      "summary": "CaCO₃ 吸熱分解：CaCO₃ → CaO + CO₂（煅燒）。生石灰遇水會強烈放熱成熟石灰。",
+      "mechanisms": [
+        "calcination",
+        "endothermic_decomposition"
+      ],
+      "keywords": [
+        "lime cycle",
+        "CaCO₃ thermal decomposition"
+      ],
+      "approxRealism": "omits_kiln_atmosphere_detail"
+    },
+    "icon": "flow-stone-to-oxide"
+  },
+  {
+    "id": "steam_distill_rosemary",
+    "domain": "alchemy",
+    "name": {
+      "zh": "迷迭香蒸汽蒸餾",
+      "en": "Rosemary steam distillation"
+    },
+    "station": "still",
+    "process": "steam_distill",
+    "inputs": [
+      {
+        "substanceId": "rosemary",
+        "qty": 3
+      },
+      {
+        "substanceId": "water",
+        "qty": 2
+      }
+    ],
+    "outputs": [
+      {
+        "substanceId": "rosemary_oil",
+        "qty": 3,
+        "yield": 0.35
+      },
+      {
+        "substanceId": "water",
+        "qty": 1,
+        "yield": 0.5
+      }
+    ],
+    "durationSec": 16,
+    "heat": "medium",
+    "science": {
+      "summary": "蒸汽帶出揮發性精油成分；冷凝後油水因密度與極性分離（液–液分層）。",
+      "mechanisms": [
+        "steam_distillation",
+        "volatility",
+        "phase_separation"
+      ],
+      "keywords": [
+        "essential oil",
+        "azeotrope-ish practical separation"
+      ],
+      "approxRealism": "yield_far_higher_than_lab_for_gameplay"
+    },
+    "icon": "flow-plant-to-oil"
+  },
+  {
+    "id": "emulsify_mayo",
+    "domain": "kitchen",
+    "name": {
+      "zh": "乳化美乃滋",
+      "en": "Mayonnaise emulsion"
+    },
+    "station": "kitchen",
+    "process": "emulsify",
+    "inputs": [
+      {
+        "substanceId": "egg",
+        "qty": 1
+      },
+      {
+        "substanceId": "oil",
+        "qty": 3
+      },
+      {
+        "substanceId": "water",
+        "qty": 1
+      }
+    ],
+    "outputs": [
+      {
+        "substanceId": "mayonnaise",
+        "qty": 2,
+        "yield": 0.9
+      }
+    ],
+    "durationSec": 6,
+    "heat": "none",
+    "science": {
+      "summary": "蛋黃卵磷脂是兩性分子，穩定油-in-water 乳液；剪切把油滴打細以增大界面。",
+      "mechanisms": [
+        "emulsification",
+        "amphiphile",
+        "surface_area"
+      ],
+      "keywords": [
+        "lecithin",
+        "oil-in-water emulsion"
+      ],
+      "approxRealism": "omits_acid_salt_for_mvp"
+    },
+    "icon": "flow-whisk-emulsion"
+  },
+  {
+    "id": "bake_bread",
+    "domain": "kitchen",
+    "name": {
+      "zh": "發酵烘烤麵包",
+      "en": "Ferment and bake bread"
+    },
+    "station": "oven",
+    "process": "ferment_bake",
+    "inputs": [
+      {
+        "substanceId": "bread_dough",
+        "qty": 1
+      },
+      {
+        "substanceId": "yeast",
+        "qty": 1
+      },
+      {
+        "substanceId": "water",
+        "qty": 1
+      }
+    ],
+    "outputs": [
+      {
+        "substanceId": "leavened_bread",
+        "qty": 1,
+        "yield": 0.95
+      }
+    ],
+    "durationSec": 20,
+    "heat": "medium_high",
+    "science": {
+      "summary": "酵母發酵產生 CO₂ 撐起麩質網路；烘烤使蛋白質變性、澱粉糊化，表層發生梅納褐變。",
+      "mechanisms": [
+        "fermentation",
+        "gluten_network",
+        "starch_gelatinization",
+        "maillard"
+      ],
+      "keywords": [
+        "Saccharomyces",
+        "Maillard reaction",
+        "oven spring"
+      ],
+      "approxRealism": "single_step_combines_proof_and_bake"
+    },
+    "icon": "flow-dough-to-loaf"
+  },
+  {
+    "id": "caramelize_sugar",
+    "domain": "kitchen",
+    "name": {
+      "zh": "糖的焦糖化",
+      "en": "Sugar caramelization"
+    },
+    "station": "kitchen",
+    "process": "caramelize",
+    "inputs": [
+      {
+        "substanceId": "sugar",
+        "qty": 2
+      }
+    ],
+    "outputs": [
+      {
+        "substanceId": "caramel",
+        "qty": 2,
+        "yield": 0.85
+      }
+    ],
+    "durationSec": 7,
+    "heat": "medium_high",
+    "science": {
+      "summary": "蔗糖受熱分解／再聚合產生褐色聚合物與香氣分子；與梅納不同（梅納需要氨基酸）。",
+      "mechanisms": [
+        "caramelization",
+        "pyrolysis"
+      ],
+      "keywords": [
+        "caramelization vs Maillard"
+      ],
+      "approxRealism": "no_invert_sugar_path_modeled"
+    },
+    "icon": "flow-sugar-to-amber"
+  },
+  {
+    "id": "temper_chocolate",
+    "domain": "kitchen",
+    "name": {
+      "zh": "可可脂調溫",
+      "en": "Chocolate tempering"
+    },
+    "station": "kitchen",
+    "process": "temper",
+    "inputs": [
+      {
+        "substanceId": "cocoa_mass",
+        "qty": 2
+      }
+    ],
+    "outputs": [
+      {
+        "substanceId": "tempered_chocolate",
+        "qty": 2,
+        "yield": 0.9
+      }
+    ],
+    "durationSec": 11,
+    "heat": "controlled_curve",
+    "science": {
+      "summary": "可可脂有多種晶型；調溫引導穩定的 Form V，得到光澤、脆斷與抗霜性。",
+      "mechanisms": [
+        "polymorphism",
+        "crystallization",
+        "thermal_history"
+      ],
+      "keywords": [
+        "cocoa butter Form V",
+        "tempering curve"
+      ],
+      "approxRealism": "hides_exact_temperature_steps_behind_heat_curve"
+    },
+    "icon": "flow-temper-curve"
+  },
+  {
+    "id": "evaporate_brine",
+    "domain": "physics",
+    "name": {
+      "zh": "鹽水蒸發結晶",
+      "en": "Brine evaporation crystallization"
+    },
+    "station": "evaporator",
+    "process": "evaporate",
+    "inputs": [
+      {
+        "substanceId": "brine",
+        "qty": 3
+      }
+    ],
+    "outputs": [
+      {
+        "substanceId": "halite",
+        "qty": 2,
+        "yield": 0.9
+      },
+      {
+        "substanceId": "steam",
+        "qty": 2,
+        "yield": 0.85
+      }
+    ],
+    "durationSec": 10,
+    "heat": "medium",
+    "science": {
+      "summary": "溶劑蒸發使溶質濃度升高至過飽和，NaCl 成核生長為固體結晶；水以蒸氣離開體系。",
+      "mechanisms": [
+        "evaporation",
+        "crystallization",
+        "solubility"
+      ],
+      "keywords": [
+        "supersaturation",
+        "solar salt",
+        "evaporite"
+      ],
+      "approxRealism": "ignores_humidity_and_exact_solubility_curve"
+    },
+    "icon": "flow-brine-to-salt"
+  },
+  {
+    "id": "freeze_water",
+    "domain": "physics",
+    "name": {
+      "zh": "水的凍結",
+      "en": "Freezing water"
+    },
+    "station": "freezer",
+    "process": "freeze",
+    "inputs": [
+      {
+        "substanceId": "water",
+        "qty": 2
+      }
+    ],
+    "outputs": [
+      {
+        "substanceId": "ice",
+        "qty": 2,
+        "yield": 0.95
+      }
+    ],
+    "durationSec": 8,
+    "heat": "none",
+    "science": {
+      "summary": "降溫至凝固點以下，液態水形成有序冰晶格並放出潛熱（凝固放熱）。MVP 以 0°C／1 atm 簡化。",
+      "mechanisms": [
+        "phase_change",
+        "solidification"
+      ],
+      "keywords": [
+        "latent heat of fusion",
+        "ice Ih"
+      ],
+      "approxRealism": "fixed_0C_1atm_no_supercooling"
+    },
+    "icon": "flow-water-to-ice"
+  },
+  {
+    "id": "boil_water",
+    "domain": "physics",
+    "name": {
+      "zh": "水的沸騰汽化",
+      "en": "Boiling water"
+    },
+    "station": "boiler",
+    "process": "boil",
+    "inputs": [
+      {
+        "substanceId": "water",
+        "qty": 2
+      }
+    ],
+    "outputs": [
+      {
+        "substanceId": "steam",
+        "qty": 2,
+        "yield": 0.95
+      }
+    ],
+    "durationSec": 8,
+    "heat": "high",
+    "science": {
+      "summary": "到達沸點時液相大量轉為氣相，需吸收汽化潛熱。MVP 以 100°C／1 atm 簡化。",
+      "mechanisms": [
+        "phase_change",
+        "vaporization"
+      ],
+      "keywords": [
+        "latent heat of vaporization",
+        "saturation vapor pressure"
+      ],
+      "approxRealism": "fixed_100C_1atm"
+    },
+    "icon": "flow-water-to-steam"
+  },
+  {
+    "id": "condense_steam",
+    "domain": "physics",
+    "name": {
+      "zh": "蒸汽冷凝",
+      "en": "Steam condensation"
+    },
+    "station": "still",
+    "process": "condense",
+    "inputs": [
+      {
+        "substanceId": "steam",
+        "qty": 2
+      }
+    ],
+    "outputs": [
+      {
+        "substanceId": "water",
+        "qty": 2,
+        "yield": 0.95
+      }
+    ],
+    "durationSec": 6,
+    "heat": "none",
+    "science": {
+      "summary": "氣相遇冷放出潛熱變回液相；與蒸汽蒸餾的冷凝段同一物理機制。",
+      "mechanisms": [
+        "phase_change",
+        "condensation"
+      ],
+      "keywords": [
+        "condenser",
+        "latent heat"
+      ],
+      "approxRealism": "instant_ideal_condenser"
+    },
+    "icon": "flow-steam-to-water"
+  },
+  {
+    "id": "density_panning",
+    "domain": "physics",
+    "name": {
+      "zh": "淘洗重選",
+      "en": "Density panning"
+    },
+    "station": "evaporator",
+    "process": "density_separate",
+    "inputs": [
+      {
+        "substanceId": "ore_sand_mix",
+        "qty": 3
+      },
+      {
+        "substanceId": "water",
+        "qty": 2
+      }
+    ],
+    "outputs": [
+      {
+        "substanceId": "malachite",
+        "qty": 1,
+        "yield": 0.8
+      },
+      {
+        "substanceId": "gangue",
+        "qty": 2,
+        "yield": 0.85
+      }
+    ],
+    "durationSec": 9,
+    "heat": "none",
+    "science": {
+      "summary": "流體中顆粒受重力與曳力；密度較大的礦粒沉降／滯留，較輕脈石被沖走（淘洗／重選原理）。",
+      "mechanisms": [
+        "density_separation",
+        "fluid_drag"
+      ],
+      "keywords": [
+        "panning",
+        "gravity concentration",
+        "Stokes drag"
+      ],
+      "approxRealism": "binary_split_no_particle_size_distribution"
+    },
+    "icon": "flow-pan-ore"
+  }
+]

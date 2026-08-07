@@ -1,0 +1,417 @@
+[
+  {
+    "id": "malachite",
+    "name": {
+      "zh": "孔雀石",
+      "en": "Malachite"
+    },
+    "kind": "mineral",
+    "formula": "Cu₂CO₃(OH)₂",
+    "traits": [
+      "copper_source",
+      "carbonate",
+      "green"
+    ],
+    "rarity": "common",
+    "icon": "hex-green-ore"
+  },
+  {
+    "id": "charcoal",
+    "name": {
+      "zh": "木炭",
+      "en": "Charcoal"
+    },
+    "kind": "element_carrier",
+    "formula": "C (amorphous)",
+    "traits": [
+      "reductant",
+      "fuel"
+    ],
+    "rarity": "common",
+    "icon": "block-black-carbon"
+  },
+  {
+    "id": "copper_metal",
+    "name": {
+      "zh": "銅",
+      "en": "Copper"
+    },
+    "kind": "element",
+    "formula": "Cu",
+    "traits": [
+      "metal",
+      "ductile",
+      "conductor"
+    ],
+    "rarity": "uncommon",
+    "icon": "circle-copper"
+  },
+  {
+    "id": "cassiterite",
+    "name": {
+      "zh": "錫石",
+      "en": "Cassiterite"
+    },
+    "kind": "mineral",
+    "formula": "SnO₂",
+    "traits": [
+      "tin_source",
+      "oxide"
+    ],
+    "rarity": "uncommon",
+    "icon": "hex-brown-ore"
+  },
+  {
+    "id": "tin_metal",
+    "name": {
+      "zh": "錫",
+      "en": "Tin"
+    },
+    "kind": "element",
+    "formula": "Sn",
+    "traits": [
+      "metal",
+      "low_melting"
+    ],
+    "rarity": "uncommon",
+    "icon": "circle-tin"
+  },
+  {
+    "id": "bronze",
+    "name": {
+      "zh": "青銅",
+      "en": "Bronze"
+    },
+    "kind": "alloy",
+    "formula": "Cu–Sn",
+    "traits": [
+      "alloy",
+      "harder_than_cu",
+      "castable"
+    ],
+    "rarity": "rare",
+    "icon": "blend-copper-tin"
+  },
+  {
+    "id": "limestone",
+    "name": {
+      "zh": "石灰石",
+      "en": "Limestone"
+    },
+    "kind": "mineral",
+    "formula": "CaCO₃",
+    "traits": [
+      "carbonate",
+      "flux_candidate"
+    ],
+    "rarity": "common",
+    "icon": "hex-grey-stone"
+  },
+  {
+    "id": "quicklime",
+    "name": {
+      "zh": "生石灰",
+      "en": "Quicklime"
+    },
+    "kind": "compound",
+    "formula": "CaO",
+    "traits": [
+      "alkaline",
+      "exothermic_hydration"
+    ],
+    "rarity": "uncommon",
+    "icon": "tri-white-oxide"
+  },
+  {
+    "id": "rosemary",
+    "name": {
+      "zh": "迷迭香",
+      "en": "Rosemary"
+    },
+    "kind": "plant",
+    "formula": null,
+    "traits": [
+      "aromatic",
+      "terpenes",
+      "herb"
+    ],
+    "rarity": "common",
+    "icon": "leaf-rosemary"
+  },
+  {
+    "id": "rosemary_oil",
+    "name": {
+      "zh": "迷迭香精油",
+      "en": "Rosemary essential oil"
+    },
+    "kind": "extract",
+    "formula": "mixed terpenes (e.g. 1,8-cineole)",
+    "traits": [
+      "volatile",
+      "hydrophobic",
+      "fragrant"
+    ],
+    "rarity": "uncommon",
+    "icon": "drop-green-oil"
+  },
+  {
+    "id": "water",
+    "name": {
+      "zh": "水",
+      "en": "Water"
+    },
+    "kind": "element_compound",
+    "formula": "H₂O",
+    "traits": [
+      "solvent",
+      "polar",
+      "phase_change"
+    ],
+    "rarity": "common",
+    "icon": "drop-blue"
+  },
+  {
+    "id": "egg",
+    "name": {
+      "zh": "蛋",
+      "en": "Egg"
+    },
+    "kind": "food",
+    "formula": null,
+    "traits": [
+      "protein",
+      "lecithin",
+      "emulsifier"
+    ],
+    "rarity": "common",
+    "icon": "oval-cream"
+  },
+  {
+    "id": "oil",
+    "name": {
+      "zh": "食用油",
+      "en": "Cooking oil"
+    },
+    "kind": "food",
+    "formula": "triglycerides",
+    "traits": [
+      "hydrophobic",
+      "lipid"
+    ],
+    "rarity": "common",
+    "icon": "drop-gold-oil"
+  },
+  {
+    "id": "mayonnaise",
+    "name": {
+      "zh": "美乃滋",
+      "en": "Mayonnaise"
+    },
+    "kind": "food_product",
+    "formula": null,
+    "traits": [
+      "emulsion",
+      "stable_oil_in_water"
+    ],
+    "rarity": "uncommon",
+    "icon": "jar-emulsion"
+  },
+  {
+    "id": "bread_dough",
+    "name": {
+      "zh": "麵團",
+      "en": "Bread dough"
+    },
+    "kind": "food",
+    "formula": null,
+    "traits": [
+      "gluten_network",
+      "starch",
+      "fermentable"
+    ],
+    "rarity": "common",
+    "icon": "lump-dough"
+  },
+  {
+    "id": "yeast",
+    "name": {
+      "zh": "酵母",
+      "en": "Yeast"
+    },
+    "kind": "food",
+    "formula": null,
+    "traits": [
+      "fermenter",
+      "biocatalyst"
+    ],
+    "rarity": "common",
+    "icon": "dots-yeast"
+  },
+  {
+    "id": "leavened_bread",
+    "name": {
+      "zh": "發酵麵包",
+      "en": "Leavened bread"
+    },
+    "kind": "food_product",
+    "formula": null,
+    "traits": [
+      "maillard_crust",
+      "gas_cells",
+      "set_protein_starch"
+    ],
+    "rarity": "uncommon",
+    "icon": "loaf-bread"
+  },
+  {
+    "id": "sugar",
+    "name": {
+      "zh": "糖",
+      "en": "Sugar"
+    },
+    "kind": "food",
+    "formula": "C₁₂H₂₂O₁₁ (sucrose)",
+    "traits": [
+      "carbohydrate",
+      "caramelizable"
+    ],
+    "rarity": "common",
+    "icon": "crystal-white"
+  },
+  {
+    "id": "caramel",
+    "name": {
+      "zh": "焦糖",
+      "en": "Caramel"
+    },
+    "kind": "food_product",
+    "formula": "sugar pyrolysis products",
+    "traits": [
+      "browned",
+      "volatile_aroma"
+    ],
+    "rarity": "uncommon",
+    "icon": "pool-amber"
+  },
+  {
+    "id": "cocoa_mass",
+    "name": {
+      "zh": "可可膏",
+      "en": "Cocoa mass"
+    },
+    "kind": "food",
+    "formula": null,
+    "traits": [
+      "cocoa_butter",
+      "polymorphic_fat"
+    ],
+    "rarity": "uncommon",
+    "icon": "block-cocoa"
+  },
+  {
+    "id": "tempered_chocolate",
+    "name": {
+      "zh": "調溫巧克力",
+      "en": "Tempered chocolate"
+    },
+    "kind": "food_product",
+    "formula": null,
+    "traits": [
+      "form_V_crystals",
+      "snap",
+      "gloss"
+    ],
+    "rarity": "rare",
+    "icon": "bar-gloss"
+  },
+  {
+    "id": "brine",
+    "name": {
+      "zh": "鹽水",
+      "en": "Brine"
+    },
+    "kind": "solution",
+    "formula": "NaCl(aq)",
+    "traits": [
+      "aqueous",
+      "dissolved_salt"
+    ],
+    "rarity": "common",
+    "icon": "drop-brine"
+  },
+  {
+    "id": "halite",
+    "name": {
+      "zh": "岩鹽",
+      "en": "Halite"
+    },
+    "kind": "mineral",
+    "formula": "NaCl",
+    "traits": [
+      "ionic_crystal",
+      "soluble"
+    ],
+    "rarity": "common",
+    "icon": "crystal-salt"
+  },
+  {
+    "id": "ice",
+    "name": {
+      "zh": "冰",
+      "en": "Ice"
+    },
+    "kind": "phase",
+    "formula": "H₂O(s)",
+    "traits": [
+      "solid",
+      "crystal_lattice"
+    ],
+    "rarity": "common",
+    "icon": "block-ice"
+  },
+  {
+    "id": "steam",
+    "name": {
+      "zh": "水蒸氣",
+      "en": "Steam"
+    },
+    "kind": "phase",
+    "formula": "H₂O(g)",
+    "traits": [
+      "gas",
+      "high_enthalpy"
+    ],
+    "rarity": "common",
+    "icon": "cloud-steam"
+  },
+  {
+    "id": "ore_sand_mix",
+    "name": {
+      "zh": "混礦砂",
+      "en": "Mixed ore sand"
+    },
+    "kind": "mineral",
+    "formula": null,
+    "traits": [
+      "heterogeneous",
+      "panning_feed"
+    ],
+    "rarity": "common",
+    "icon": "pile-mixed-sand"
+  },
+  {
+    "id": "gangue",
+    "name": {
+      "zh": "脈石",
+      "en": "Gangue"
+    },
+    "kind": "mineral",
+    "formula": null,
+    "traits": [
+      "low_density",
+      "waste_rock"
+    ],
+    "rarity": "common",
+    "icon": "pile-gangue"
+  }
+]

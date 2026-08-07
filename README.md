@@ -1,6 +1,6 @@
 # Verdant Platform — 花草產品體系控制台
 
-一個花草主題的技術產品展示體系：從 platform 可看到每個服務的**即時狀態**、**指定啟動 / 停止服務**，並開啟各服務的即時介面。四個服務各展現一項現代前端核心能力（即時資料流、重度動畫、極端效能優化、WebGL 3D）。
+一個花草主題的技術產品展示體系：從 platform 可看到每個服務的**即時狀態**、**指定啟動 / 停止服務**，並開啟各服務的即時介面。四個花草服務各展現一項現代前端核心能力；第五站 **Atelier** 展現跨主題領域模型（鍊金／廚房／物理配方引擎）。
 
 - **前端**：React + TypeScript + Tailwind CSS + Zustand + TanStack Query（多頁 Vite 建置）；3D 服務用 Three.js
 - **後端**：零第三方依賴的 Node（含手刻 RFC 6455 WebSocket），只用 Node 內建模組
@@ -43,12 +43,13 @@ Vite 已設定 proxy，把 `/api` 與 `/ws` 轉發到 4000，所以在 5173 開�
                                      ├─▶ garden :4101（React 頁 + REST 排行 + WebSocket 即時花園）
                                      ├─▶ bloom  :4102（React 頁 · Canvas 動畫）
                                      ├─▶ meadow :4103（React 頁 · 效能實驗室）
-                                     └─▶ scene  :4104（React 頁 · Three.js 3D 場景）
+                                     ├─▶ scene  :4104（React 頁 · Three.js 3D 場景）
+                                     └─▶ atelier:4105（React 頁 · RecipeEngine + 科學圖鑑）
 ```
 
 控制台主程序用 `child_process.spawn` 真的把子服務拉起（靠子程序 stdout 的 `READY` 判定就緒），`SIGTERM` 停止（3 秒後 `SIGKILL` 保底），每 2 秒對執行中的服務做 **TCP 健康檢查**，把 `status / pid / uptime / reachable` 經 WebSocket 廣播給控制台。
 
-## 四個服務對應的技術展示
+## 服務對應的技術展示
 
 | 服務 | 展現能力 | 用到的技術棧重點 |
 |------|---------|-----------------|
@@ -56,6 +57,9 @@ Vite 已設定 proxy，把 `/api` 與 `/ws` 轉發到 4000，所以在 5173 開�
 | 花朵綻放 | 重度動畫、像素級渲染、效能降階 | Canvas + `requestAnimationFrame` 固定時間步長主迴圈、花瓣緩動綻放、花粉粒子、低配裝置模式（Zustand 控制、降 30fps／關粒子） |
 | 花圃效能實驗室 | DOM 渲染、記憶體洩漏、極端優化 | 5 萬株花圃的虛擬列表 vs 全量渲染 FPS 對比、即時 FPS 儀表、記憶體洩漏製造/修復示範 |
 | 3D 花園場景 | WebGL 3D 渲染、互動相機 | Three.js 程序化花田、OrbitControls 拖曳縮放、風吹搖曳動畫、低多邊形降階、離開頁面釋放 geometry/material/renderer 避免 WebGL 洩漏 |
+| 鍊金工坊 Atelier | 跨主題領域模型、可解釋科學 | `shared/atelier` Substance／Recipe seed、Zod 契約、純函式 RecipeEngine（`floor(qty×yield)`）、REST craft／庫存、示意圖 UI |
+
+Atelier 測試：`npm test`（Vitest）。
 
 ## 技術棧在哪裡看
 

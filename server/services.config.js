@@ -15,4 +15,8 @@ export default [
     tags:['Three.js','WebGL','3D 渲染','OrbitControls','資源釋放'],
     role:'展現：WebGL 3D 場景與互動相機（nice-to-have）。',
     desc:'Three.js 程序化花田，OrbitControls 互動相機、風吹搖曳動畫；離開頁面釋放 GPU 資源避免 WebGL 洩漏。' },
+  { id:'atelier', name:'鍊金工坊 Atelier', port:4105, script:'server/atelier-service.js', accent:'#b45309',
+    tags:['領域模型','RecipeEngine','Zod','科學圖鑑','alchemy/kitchen/physics'],
+    role:'展現：跨主題 Substance／Recipe 引擎與可解釋科學註解。',
+    desc:'鍊金冶煉、廚房乳化、物理相變／蒸發結晶共用同一套配方引擎；示意圖＋科學抽屜；REST craft／庫存。' },
 ];
