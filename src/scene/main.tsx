@@ -2,7 +2,9 @@ import React, { useEffect, useRef, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
+import { MediaFrame } from '@is_tess/components';
 import { useGarden } from '../lib/store';
+import '@is_tess/tokens/css/verdant.css';
 import '../index.css';
 
 type FlowerMesh = { group: THREE.Group; phase: number; baseRot: number };
@@ -144,8 +146,10 @@ function Scene() {
             FPS <b className={`tabular-nums ${fps < 40 ? 'text-rose-500' : 'text-leaf-600'}`}>{fps}</b> · 花 <b className="tabular-nums">{count}</b>
           </div>
         </div>
-        <div className="mt-4 rounded-2xl bg-white border border-leaf-100 p-3 shadow-sm overflow-hidden">
-          <div ref={mountRef} className="w-full rounded-xl overflow-hidden" style={{ height: 420 }} />
+        <div className="mt-4">
+          <MediaFrame label="Three.js viewport · dispose on unmount" aspectRatio="16 / 9">
+            <div ref={mountRef} className="h-full w-full" style={{ minHeight: 420 }} />
+          </MediaFrame>
           <div className="flex items-center justify-center gap-4 mt-3">
             <button onClick={() => apiRef.current?.addFlower()} className="rounded-full bg-leaf-500 hover:bg-leaf-600 text-white font-bold px-8 py-3 shadow-md transition active:translate-y-0.5">🌷 種一朵</button>
             <label className="text-[13px] text-slate-500 flex items-center gap-2">

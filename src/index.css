@@ -2,5 +2,42 @@
 @tailwind components;
 @tailwind utilities;
 
-:root { color-scheme: light; }
-body { margin: 0; font-family: "Noto Sans TC", system-ui, sans-serif; }
+@layer base {
+  /* Bridge: @is_tess/tokens verdant.css semantic → component CSS vars */
+  :root,
+  [data-app="verdant"] {
+    --background: var(--surface-canvas, #f3faf4);
+    --foreground: var(--text-primary, #1a2e1a);
+    --card: var(--surface-elevated, #ffffff);
+    --card-foreground: var(--text-primary, #1a2e1a);
+    --popover: var(--surface-elevated, #ffffff);
+    --popover-foreground: var(--text-primary, #1a2e1a);
+    --primary: var(--accent-brand, #3d8b4f);
+    --primary-foreground: var(--text-inverse, #f3faf4);
+    --secondary: var(--surface-muted, #e2f0e6);
+    --secondary-foreground: var(--text-primary, #1a2e1a);
+    --muted: var(--surface-muted, #e2f0e6);
+    --muted-foreground: var(--text-secondary, #4a6350);
+    --accent: var(--surface-muted, #e2f0e6);
+    --accent-foreground: var(--text-primary, #1a2e1a);
+    --destructive: var(--status-danger, #b5493a);
+    --destructive-foreground: var(--status-danger-contrast, #f3faf4);
+    --border: var(--border-primary, #c5ddcb);
+    --input: var(--border-primary, #c5ddcb);
+    --ring: var(--accent-brand, #3d8b4f);
+    --radius: var(--radius-base, 1rem);
+    --status-success: #3d8b4f;
+    --status-success-contrast: #f3faf4;
+    --status-warning: #b45309;
+    --status-warning-contrast: #fff7ed;
+    --status-info: #0e7490;
+    --status-info-contrast: #ecfeff;
+  }
+
+  body {
+    margin: 0;
+    font-family: "Noto Sans TC", system-ui, sans-serif;
+    background: var(--background);
+    color: var(--foreground);
+  }
+}

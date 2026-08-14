@@ -13,7 +13,7 @@ export type ServiceInfo = {
   uptime: number; reachable: boolean; url: string;
 };
 
-export async function fetchServices(): Promise<{ services: ServiceInfo[] }> {
+export async function fetchServices(): Promise<{ services: ServiceInfo[]; hosted?: boolean }> {
   const r = await fetch('/api/services');
   if (!r.ok) throw new Error('services failed');
   return r.json();

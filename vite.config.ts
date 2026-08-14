@@ -5,6 +5,9 @@ import { resolve } from 'path';
 // 多頁應用：platform 控制台 + 花草服務 + atelier
 export default defineConfig({
   plugins: [react()],
+  optimizeDeps: {
+    include: ['@is_tess/components', '@is_tess/tokens'],
+  },
   server: {
     // dev 模式：把 API 與 WebSocket 轉發到控制台 orchestrator（node server/server.js @ 4000）
     // atelier 本機 API 在 :4105；開發 UI 時請由控制台啟動後開該埠，或另設 proxy。

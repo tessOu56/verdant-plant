@@ -1,9 +1,14 @@
-# Verdant Platform — 花草產品體系控制台
+# Verdant Platform — Explore Design 動態能力 lab
 
-一個花草主題的技術產品展示體系：從 platform 可看到每個服務的**即時狀態**、**指定啟動 / 停止服務**，並開啟各服務的即時介面。四個花草服務各展現一項現代前端核心能力；第五站 **Atelier** 展現跨主題領域模型（鍊金／廚房／物理配方引擎）。
+**不是**園藝電商，也不是第二個 Portal／Plinth。  
+花草主題包裝的 **前端能力展示控制台**：即時狀態、指定啟動／停止服務、開啟各站 live UI。四站各展現一項 FE 深度能力；第五站 **Atelier** 為同產品下的配方引擎切片。
 
-- **前端**：React + TypeScript + Tailwind CSS + Zustand + TanStack Query（多頁 Vite 建置）；3D 服務用 Three.js
-- **後端**：零第三方依賴的 Node（含手刻 RFC 6455 WebSocket），只用 Node 內建模組
+定位 SSOT：[`docs/PROJECT-PLAN.md`](docs/PROJECT-PLAN.md)
+
+**業務三角：** Portal＝AI 搜尋／治理產品 · Plinth＝金工 Gallery／商業 · Verdant＝同一套 Explore Design（`@is_tess/*`）的活體 lab（即時／效能／3D／配方）。
+
+- **前端**：React + TypeScript + Tailwind + Zustand + TanStack Query（多頁 Vite）；UI 消費 `@is_tess/components`＋`@is_tess/tokens`（application: `verdant`）；3D 用 Three.js
+- **後端**：零第三方依賴 Node（手刻 RFC 6455 WebSocket）；公開主站以 Render 等同構 Node host 為準（動態，非純靜態）
 
 ## 執行方式
 

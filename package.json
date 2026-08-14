@@ -2,7 +2,7 @@
   "name": "verdant-platform",
   "private": true,
   "version": "2.0.0",
-  "description": "花草產品體系控制台：即時狀態、指定啟動服務。前端 React+TS+Tailwind+Zustand+TanStack Query，後端零依賴 Node。",
+  "description": "Explore Design living lab：動態編排控制台 + FE 深度站。UI 消費 @is_tess/*。",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -23,6 +23,8 @@
     "@capacitor/android": "^7.2.0",
     "@capacitor/core": "^7.2.0",
     "@capacitor/ios": "^7.2.0",
+    "@is_tess/components": "^0.1.2",
+    "@is_tess/tokens": "^0.1.1",
     "@tanstack/react-query": "^5.51.0",
     "@types/three": "^0.185.1",
     "react": "^18.3.1",
