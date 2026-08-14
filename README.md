@@ -1,14 +1,14 @@
 # Verdant Platform — Explore Design 動態能力 lab
 
-**不是**園藝電商，也不是第二個 Portal／Plinth。  
-花草主題包裝的 **前端能力展示控制台**：即時狀態、指定啟動／停止服務、開啟各站 live UI。四站各展現一項 FE 深度能力；第五站 **Atelier** 為同產品下的配方引擎切片。
+花草主題的 **前端能力展示控制台**（即時狀態、啟動／停止服務、開啟各站 UI）。  
+與 Portal／Plinth 共用 Explore Design（`@is_tess/*`）；本 repo **只放產品碼與部署描述**。
 
-定位 SSOT：[`docs/PROJECT-PLAN.md`](docs/PROJECT-PLAN.md)
+- **前端**：React + TypeScript + Tailwind + Zustand + TanStack Query；`@is_tess/components`＋`@is_tess/tokens`（`verdant`）
+- **後端**：零依賴 Node orchestrator（手刻 WebSocket）；公開主站以 Render `HOSTED=1` 為準
 
-**業務三角：** Portal＝AI 搜尋／治理產品 · Plinth＝金工 Gallery／商業 · Verdant＝同一套 Explore Design（`@is_tess/*`）的活體 lab（即時／效能／3D／配方）。
+定位／票／deploy 敘事 → **platform-command**（私人 orchestration），不在本公開 repo 維護規劃文。
 
-- **前端**：React + TypeScript + Tailwind + Zustand + TanStack Query（多頁 Vite）；UI 消費 `@is_tess/components`＋`@is_tess/tokens`（application: `verdant`）；3D 用 Three.js
-- **後端**：零第三方依賴 Node（手刻 RFC 6455 WebSocket）；公開主站以 Render 等同構 Node host 為準（動態，非純靜態）
+## 執行方式
 
 ## 執行方式
 
