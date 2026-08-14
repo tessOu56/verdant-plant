@@ -19,3 +19,6 @@ android/local.properties
 ios/App/Pods/
 ios/App/build/
 ios/DerivedData/
+
+# Platform tickets SSOT is platform-command — never commit distributed inbox
+docs/platform-inbox/
