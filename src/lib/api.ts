@@ -18,3 +18,10 @@ export async function fetchServices(): Promise<{ services: ServiceInfo[]; hosted
   if (!r.ok) throw new Error('services failed');
   return r.json();
 }
+
+export async function controlService(id: string, action: 'start' | 'stop'): Promise<void> {
+  const r = await fetch(`/api/services/${id}/${action}`, { method: 'POST' });
+  if (!r.ok) {
+    throw new Error(action === 'start' ? '啟動失敗' : '停止失敗');
+  }
+}

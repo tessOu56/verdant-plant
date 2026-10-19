@@ -1,11 +1,14 @@
+@import '@is_tess/tokens/css/verdant.css';
+@import '@is_tess/tokens/css/brand-mark.css';
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
-  /* Bridge: @is_tess/tokens verdant.css semantic → component CSS vars */
+  /* Bridge: @is_tess/tokens verdant.css semantic → shadcn-style component CSS vars */
   :root,
-  [data-app="verdant"] {
+  [data-app='verdant'] {
     --background: var(--surface-canvas, #f3faf4);
     --foreground: var(--text-primary, #1a2e1a);
     --card: var(--surface-elevated, #ffffff);
@@ -26,18 +29,53 @@
     --input: var(--border-primary, #c5ddcb);
     --ring: var(--accent-brand, #3d8b4f);
     --radius: var(--radius-base, 1rem);
-    --status-success: #3d8b4f;
-    --status-success-contrast: #f3faf4;
-    --status-warning: #b45309;
-    --status-warning-contrast: #fff7ed;
-    --status-info: #0e7490;
-    --status-info-contrast: #ecfeff;
+  }
+
+  html {
+    -webkit-text-size-adjust: 100%;
   }
 
   body {
     margin: 0;
-    font-family: "Noto Sans TC", system-ui, sans-serif;
+    font-family: var(--font-body, 'Noto Sans TC', system-ui, sans-serif);
+    font-size: var(--type-body-size, 1rem);
+    line-height: var(--type-body-leading, 1.5);
     background: var(--background);
     color: var(--foreground);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: 2px;
+  }
+}
+
+@layer components {
+  .skip-link {
+    position: absolute;
+    left: 0.75rem;
+    top: -3.5rem;
+    z-index: 50;
+    border-radius: var(--radius-base, 1rem);
+    background: var(--primary);
+    color: var(--primary-foreground);
+    padding: 0.5rem 1rem;
+    font-size: var(--type-label-size, 0.875rem);
+    font-weight: 600;
+  }
+
+  .skip-link:focus {
+    top: 0.75rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
   }
 }

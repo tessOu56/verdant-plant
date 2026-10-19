@@ -1,7 +1,16 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { createRoot } from 'react-dom/client';
 import { QueryClient, QueryClientProvider, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import '../index.css';
+import {
+  Alert,
+  AlertDescription,
+  Button,
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  EmptyState,
+  Skeleton,
+} from '@is_tess/components';
 import {
   completeCraft,
   effectiveDurationSec,
@@ -13,6 +22,9 @@ import {
   startCraft,
 } from './client';
 import type { Domain, Recipe } from './types';
+import { humanizeCraftError } from '../lib/nav';
+import { StationShell, boot } from '../lib/shell';
+import '../index.css';
 
 const qc = new QueryClient();
 const MODE = resolveMode();
@@ -30,18 +42,31 @@ const DOMAINS: { id: Domain; label: string }[] = [
 ];
 
 const ICON_COLOR: Record<string, string> = {
-  mineral: '#64748b', plant: '#16a34a', element: '#b45309', alloy: '#a16207',
-  food: '#ca8a04', food_product: '#d97706', solution: '#0284c7', phase: '#7dd3fc',
-  extract: '#15803d', compound: '#94a3b8', element_carrier: '#1e293b', element_compound: '#0ea5e9',
+  mineral: 'var(--chart-series-1, #3e5b53)',
+  plant: 'var(--accent-brand, #3d8b4f)',
+  element: 'var(--status-warning, #c99a4b)',
+  alloy: 'var(--chart-series-6, #ad7247)',
+  food: 'var(--chart-series-3, #c99a4b)',
+  food_product: 'var(--chart-series-3, #c99a4b)',
+  solution: 'var(--status-info, #0284c7)',
+  phase: 'var(--status-info, #0284c7)',
+  extract: 'var(--accent-strong, #2a6438)',
+  compound: 'var(--chart-series-8, #55617d)',
+  element_carrier: 'var(--text-primary, #1a2e1a)',
+  element_compound: 'var(--status-info, #0284c7)',
 };
 
 function SchematicChip({ label, sub, color }: { label: string; sub?: string; color: string }) {
   return (
-    <div className="flex flex-col items-center gap-1 min-w-[72px]">
-      <div className="w-12 h-12 rounded-xl border-2 border-dashed grid place-items-center text-[10px] font-mono text-white"
-        style={{ background: color, borderColor: color }}>{label.slice(0, 4)}</div>
-      <span className="text-[11px] text-center text-slate-600 leading-tight max-w-[80px]">{label}</span>
-      {sub && <span className="text-[10px] text-slate-400 tabular-nums">×{sub}</span>}
+    <div className="flex min-w-[72px] flex-col items-center gap-1">
+      <div
+        className="grid h-12 w-12 place-items-center rounded-xl border-2 font-mono text-[10px] text-primary-foreground"
+        style={{ background: color, borderColor: color }}
+      >
+        {label.slice(0, 4)}
+      </div>
+      <span className="max-w-[80px] text-center text-xs leading-tight text-foreground">{label}</span>
+      {sub ? <span className="text-[10px] tabular-nums text-muted-foreground">×{sub}</span> : null}
     </div>
   );
 }
@@ -53,6 +78,7 @@ function Atelier() {
   const [now, setNow] = useState(Date.now());
   const [err, setErr] = useState<string | null>(null);
   const [flashIds, setFlashIds] = useState<Set<string>>(new Set());
+  const [live, setLive] = useState('');
 
   const catalog = useQuery({
     queryKey: ['atelier-catalog', MODE],
@@ -62,11 +88,13 @@ function Atelier() {
     queryKey: ['atelier-inventory', MODE],
     queryFn: () => fetchInventory(MODE),
     refetchInterval: MODE === 'remote' ? 2000 : false,
+    retry: 1,
   });
   const craft = useQuery({
     queryKey: ['atelier-craft', MODE],
     queryFn: () => fetchCraft(MODE),
     refetchInterval: MODE === 'remote' ? 500 : 250,
+    retry: 1,
   });
 
   useEffect(() => {
@@ -89,8 +117,12 @@ function Atelier() {
 
   const startMut = useMutation({
     mutationFn: (recipeId: string) => startCraft(MODE, recipeId),
-    onSuccess: () => { setErr(null); invalidate(); },
-    onError: (e: Error) => setErr(e.message),
+    onSuccess: () => {
+      setErr(null);
+      setLive(`開始提煉 ${selected?.name.zh ?? ''}`);
+      invalidate();
+    },
+    onError: (e: Error) => setErr(humanizeCraftError(e.message)),
   });
   const completeMut = useMutation({
     mutationFn: () => completeCraft(MODE),
@@ -99,13 +131,19 @@ function Atelier() {
       const gained = Object.keys(body.stock).filter((id) => (body.stock[id] ?? 0) > (stock[id] ?? 0));
       setFlashIds(new Set(gained));
       setTimeout(() => setFlashIds(new Set()), 1200);
+      setLive('收取完成，庫存已更新');
       invalidate();
     },
-    onError: (e: Error) => setErr(e.message),
+    onError: (e: Error) => setErr(humanizeCraftError(e.message)),
   });
   const resetMut = useMutation({
     mutationFn: () => resetInventory(MODE),
-    onSuccess: () => { setErr(null); invalidate(); },
+    onSuccess: () => {
+      setErr(null);
+      setLive('庫存已重置為種子資料');
+      invalidate();
+    },
+    onError: (e: Error) => setErr(humanizeCraftError(e.message)),
   });
 
   const remainMs = job ? Math.max(0, job.readyAt - now) : 0;
@@ -113,146 +151,270 @@ function Atelier() {
   const totalMs = job ? Math.max(1, job.readyAt - job.startedAt) : 1;
   const progress = job ? Math.min(1, (now - job.startedAt) / totalMs) : 0;
   const demoSec = selected ? effectiveDurationSec(selected, MODE) : 0;
+  const stockRows = Object.entries(stock)
+    .filter(([, q]) => q > 0)
+    .sort(([a], [b]) => a.localeCompare(b));
 
   function pickShortcut(id: string, d: Domain) {
     setSelectedId(id);
     setDomain(d === 'all' ? 'all' : d);
   }
 
-  return (
-    <div className="min-h-screen bg-gradient-to-b from-amber-50 via-stone-50 to-slate-100 text-soil-900">
-      <header className="flex flex-wrap items-center justify-between gap-3 px-4 sm:px-6 py-4 border-b border-amber-100 bg-white/80 backdrop-blur">
-        <div>
-          <h1 className="text-lg font-bold tracking-wide">Atelier 鍊金工坊</h1>
-          <p className="text-xs text-slate-500">
-            {MODE === 'local' ? '離線 demo · localStorage' : '遠端 API · ?api=1'}
-            {MODE === 'local' ? ' · 加速倒數' : ''}
-          </p>
-        </div>
-        <button onClick={() => resetMut.mutate()} className="text-xs px-3 py-1.5 rounded-lg border border-slate-200 bg-white hover:bg-slate-50">
-          重置庫存
-        </button>
-      </header>
+  const remoteDown = MODE === 'remote' && (inventory.isError || craft.isError);
 
-      <div className="px-4 sm:px-6 py-3 border-b border-amber-100/80 bg-white/50 space-y-2">
-        <div className="flex flex-wrap gap-2">
+  return (
+    <StationShell
+      title="Atelier 鍊金工坊"
+      description={
+        MODE === 'local'
+          ? '離線 demo · 配方引擎在瀏覽器 · localStorage · 不是上線遊戲'
+          : '遠端 API · ?api=1 · 需本機 Atelier 站 :4105'
+      }
+      live={live}
+      actions={
+        <Button size="sm" variant="outline" type="button" onClick={() => resetMut.mutate()}>
+          重置庫存
+        </Button>
+      }
+    >
+      <div className="mb-4 space-y-2">
+        <div className="flex flex-wrap gap-2" role="group" aria-label="試玩捷徑">
           {SHORTCUTS.map((s) => (
-            <button key={s.id} onClick={() => pickShortcut(s.id, s.domain)}
-              className={`text-xs px-3 py-1.5 rounded-lg font-semibold border ${selectedId === s.id ? 'bg-amber-800 text-white border-amber-800' : 'bg-amber-50 text-amber-900 border-amber-200'}`}>
+            <Button
+              key={s.id}
+              type="button"
+              size="sm"
+              variant={selectedId === s.id ? 'default' : 'outline'}
+              aria-pressed={selectedId === s.id}
+              onClick={() => pickShortcut(s.id, s.domain)}
+            >
               試玩：{s.label}
-            </button>
+            </Button>
           ))}
         </div>
-        <div className="flex flex-wrap gap-2">
+        <div className="flex flex-wrap gap-2" role="group" aria-label="領域">
           {DOMAINS.map((d) => (
-            <button key={d.id} onClick={() => setDomain(d.id)}
-              className={`text-xs px-3 py-1.5 rounded-full font-semibold border ${domain === d.id ? 'bg-amber-700 text-white border-amber-700' : 'bg-white text-slate-600 border-slate-200'}`}>
+            <Button
+              key={d.id}
+              type="button"
+              size="sm"
+              variant={domain === d.id ? 'secondary' : 'ghost'}
+              aria-pressed={domain === d.id}
+              onClick={() => setDomain(d.id)}
+            >
               {d.label}
-            </button>
+            </Button>
           ))}
         </div>
       </div>
 
-      {err && <div className="mx-4 sm:mx-6 mt-3 text-sm text-rose-600 bg-rose-50 border border-rose-100 rounded-lg px-3 py-2">{err}</div>}
+      {remoteDown ? (
+        <Alert className="mb-4">
+          <AlertDescription>
+            遠端 API 無法連線。離線 demo 不需後端：去掉網址的 <code className="font-mono">?api=1</code>
+            ，或從控制台啟動 Atelier 站。
+          </AlertDescription>
+        </Alert>
+      ) : null}
 
-      <main className="p-4 sm:p-6 grid gap-4 sm:gap-5 grid-cols-1 lg:grid-cols-[220px_1fr_200px]">
-        <section className="rounded-2xl bg-white border border-amber-100 p-3 shadow-sm max-h-[40vh] lg:max-h-[70vh] overflow-auto order-2 lg:order-1">
-          <h2 className="text-sm font-bold mb-2">配方</h2>
-          <ul className="space-y-1">
-            {filtered.map((r: Recipe) => (
-              <li key={r.id}>
-                <button onClick={() => setSelectedId(r.id)}
-                  className={`w-full text-left text-[13px] px-2.5 py-2 rounded-lg ${selected?.id === r.id ? 'bg-amber-100 text-amber-950' : 'hover:bg-slate-50 text-slate-700'}`}>
-                  <div className="font-semibold">{r.name.zh}</div>
-                  <div className="text-[10px] text-slate-400 uppercase tracking-wide">{r.domain} · {r.station}</div>
-                </button>
-              </li>
-            ))}
-          </ul>
-        </section>
+      {err ? (
+        <Alert className="mb-4" role="alert">
+          <AlertDescription>{err}</AlertDescription>
+        </Alert>
+      ) : null}
 
-        <section className="rounded-2xl bg-white border border-amber-100 p-4 sm:p-5 shadow-sm space-y-4 order-1 lg:order-2">
-          {catalog.isLoading || !selected ? (
-            <p className="text-slate-400 text-sm">載入配方…</p>
-          ) : (
-            <>
-              <div>
-                <h2 className="text-xl font-bold">{selected.name.zh}</h2>
-                <p className="text-xs text-slate-400">{selected.name.en} · {selected.process}</p>
+      <div className="grid grid-cols-1 gap-4 lg:grid-cols-[220px_1fr_200px] sm:gap-5">
+        <Card className="order-2 max-h-[40vh] overflow-auto lg:order-1 lg:max-h-[70vh]">
+          <CardHeader>
+            <CardTitle className="text-sm">配方</CardTitle>
+          </CardHeader>
+          <CardContent>
+            {catalog.isLoading ? (
+              <div className="space-y-2">
+                <Skeleton className="h-10 w-full" />
+                <Skeleton className="h-10 w-full" />
+                <Skeleton className="h-10 w-5/6" />
               </div>
-              <div className="flex flex-wrap items-center justify-center gap-3 py-4 bg-stone-50 rounded-xl border border-dashed border-stone-200">
-                {selected.inputs.map((line) => {
-                  const s = byId[line.substanceId];
-                  return <SchematicChip key={line.substanceId + 'i'} label={s?.name.zh ?? line.substanceId}
-                    sub={String(line.qty)} color={ICON_COLOR[s?.kind ?? ''] ?? '#78716c'} />;
-                })}
-                <div className="text-slate-400 text-sm font-mono px-2">→ {selected.station} →</div>
-                {selected.outputs.map((line) => {
-                  const s = byId[line.substanceId];
-                  return <SchematicChip key={line.substanceId + 'o'} label={s?.name.zh ?? line.substanceId}
-                    sub={`${line.qty}×${line.yield ?? 1}`} color={ICON_COLOR[s?.kind ?? ''] ?? '#78716c'} />;
-                })}
-              </div>
-              <div className="rounded-xl bg-slate-900 text-slate-100 p-4 text-sm leading-relaxed">
-                <div className="text-[11px] uppercase tracking-wider text-amber-300/90 mb-1">Science</div>
-                <p>{selected.science.summary}</p>
-                <div className="mt-3 flex flex-wrap gap-1.5">
-                  {selected.science.mechanisms.map((m) => (
-                    <span key={m} className="text-[10px] px-2 py-0.5 rounded-md bg-slate-700 text-amber-100">{m}</span>
-                  ))}
+            ) : catalog.isError ? (
+              <EmptyState className="py-6" title="配方載入失敗" description="目錄是打包進頁面的；重新整理試試。" />
+            ) : !filtered.length ? (
+              <EmptyState className="py-6" title="這個領域沒有配方" description="換一個領域，或按「全部」。" />
+            ) : (
+              <ul className="space-y-1">
+                {filtered.map((r: Recipe) => (
+                  <li key={r.id}>
+                    <button
+                      type="button"
+                      onClick={() => setSelectedId(r.id)}
+                      aria-current={selected?.id === r.id ? 'true' : undefined}
+                      className={`w-full rounded-lg px-2.5 py-2 text-left text-sm ${
+                        selected?.id === r.id ? 'bg-secondary text-foreground' : 'text-muted-foreground hover:bg-muted'
+                      }`}
+                    >
+                      <div className="font-semibold text-foreground">{r.name.zh}</div>
+                      <div className="text-[10px] uppercase tracking-wide text-muted-foreground">
+                        {r.domain} · {r.station}
+                      </div>
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </CardContent>
+        </Card>
+
+        <Card className="order-1 lg:order-2">
+          <CardContent className="space-y-4 pt-6">
+            {catalog.isLoading || !selected ? (
+              catalog.isError ? (
+                <EmptyState title="沒有可顯示的配方" description="目錄載入失敗。" />
+              ) : (
+                <div className="space-y-3">
+                  <Skeleton className="h-7 w-1/2" />
+                  <Skeleton className="h-24 w-full" />
+                  <p className="text-sm text-muted-foreground">載入配方…</p>
                 </div>
-                <p className="mt-2 text-[11px] text-slate-400">簡化：{selected.science.approxRealism}</p>
-              </div>
-
-              {job && (
-                <div className="space-y-1.5">
-                  <div className="h-2 rounded-full bg-stone-200 overflow-hidden">
-                    <div className="h-full bg-amber-600 transition-[width] duration-200 ease-linear"
-                      style={{ width: `${Math.round(progress * 100)}%` }} />
-                  </div>
-                  <p className="text-xs text-slate-500">
-                    進行中：<b>{job.recipeId}</b>
-                    {ready ? ' — 可收取' : ` — 剩餘 ${(remainMs / 1000).toFixed(1)}s`}
+              )
+            ) : (
+              <>
+                <div>
+                  <h2 className="text-title font-semibold">{selected.name.zh}</h2>
+                  <p className="text-xs text-muted-foreground">
+                    {selected.name.en} · {selected.process}
                   </p>
                 </div>
-              )}
+                <div className="flex flex-wrap items-center justify-center gap-3 rounded-xl border border-dashed border-border bg-muted/50 py-4">
+                  {selected.inputs.map((line) => {
+                    const s = byId[line.substanceId];
+                    return (
+                      <SchematicChip
+                        key={line.substanceId + 'i'}
+                        label={s?.name.zh ?? line.substanceId}
+                        sub={String(line.qty)}
+                        color={ICON_COLOR[s?.kind ?? ''] ?? 'var(--muted-foreground)'}
+                      />
+                    );
+                  })}
+                  <div className="px-2 font-mono text-sm text-muted-foreground">→ {selected.station} →</div>
+                  {selected.outputs.map((line) => {
+                    const s = byId[line.substanceId];
+                    return (
+                      <SchematicChip
+                        key={line.substanceId + 'o'}
+                        label={s?.name.zh ?? line.substanceId}
+                        sub={`${line.qty}×${line.yield ?? 1}`}
+                        color={ICON_COLOR[s?.kind ?? ''] ?? 'var(--muted-foreground)'}
+                      />
+                    );
+                  })}
+                </div>
+                <div className="rounded-xl bg-foreground p-4 text-sm leading-relaxed text-background">
+                  <div className="mb-1 text-[11px] uppercase tracking-wider text-primary-foreground/80">Science</div>
+                  <p>{selected.science.summary}</p>
+                  <div className="mt-3 flex flex-wrap gap-1.5">
+                    {selected.science.mechanisms.map((m) => (
+                      <span key={m} className="rounded-md bg-background/20 px-2 py-0.5 text-[10px] text-background">
+                        {m}
+                      </span>
+                    ))}
+                  </div>
+                  <p className="mt-2 text-xs text-background/70">簡化：{selected.science.approxRealism}</p>
+                </div>
 
-              <div className="flex flex-col sm:flex-row gap-2">
-                <button disabled={!!job || startMut.isPending} onClick={() => selected && startMut.mutate(selected.id)}
-                  className="flex-1 rounded-xl py-3 font-bold text-sm bg-amber-700 text-white disabled:opacity-40 hover:bg-amber-800">
-                  開始提煉（{demoSec}s{MODE === 'local' && selected.durationSec > demoSec ? ' · demo' : ''}）
-                </button>
-                <button disabled={!ready || completeMut.isPending} onClick={() => completeMut.mutate()}
-                  className="flex-1 rounded-xl py-3 font-bold text-sm bg-emerald-600 text-white disabled:opacity-40 hover:bg-emerald-700">
-                  完成收取
-                </button>
+                {job ? (
+                  <div className="space-y-1.5">
+                    <div
+                      className="h-2 overflow-hidden rounded-full bg-muted"
+                      role="progressbar"
+                      aria-valuemin={0}
+                      aria-valuemax={100}
+                      aria-valuenow={Math.round(progress * 100)}
+                      aria-label="提煉進度"
+                    >
+                      <div
+                        className="h-full bg-primary motion-safe:transition-[width] motion-safe:duration-200 motion-safe:ease-linear"
+                        style={{ width: `${Math.round(progress * 100)}%` }}
+                      />
+                    </div>
+                    <p className="text-xs text-muted-foreground">
+                      進行中：<b className="text-foreground">{job.recipeId}</b>
+                      {ready ? ' — 可收取' : ` — 剩餘 ${(remainMs / 1000).toFixed(1)}s`}
+                    </p>
+                  </div>
+                ) : null}
+
+                <div className="flex flex-col gap-2 sm:flex-row">
+                  <Button
+                    className="flex-1"
+                    disabled={!!job || startMut.isPending}
+                    onClick={() => selected && startMut.mutate(selected.id)}
+                  >
+                    開始提煉（{demoSec}s{MODE === 'local' && selected.durationSec > demoSec ? ' · demo' : ''}）
+                  </Button>
+                  <Button
+                    className="flex-1"
+                    variant="secondary"
+                    disabled={!ready || completeMut.isPending}
+                    onClick={() => completeMut.mutate()}
+                  >
+                    完成收取
+                  </Button>
+                </div>
+              </>
+            )}
+          </CardContent>
+        </Card>
+
+        <Card className="order-3 max-h-[40vh] overflow-auto lg:max-h-[70vh]">
+          <CardHeader>
+            <CardTitle className="text-sm">庫存</CardTitle>
+          </CardHeader>
+          <CardContent>
+            {inventory.isLoading ? (
+              <div className="space-y-2">
+                <Skeleton className="h-4 w-full" />
+                <Skeleton className="h-4 w-5/6" />
               </div>
-            </>
-          )}
-        </section>
-
-        <section className="rounded-2xl bg-white border border-amber-100 p-3 shadow-sm max-h-[40vh] lg:max-h-[70vh] overflow-auto order-3">
-          <h2 className="text-sm font-bold mb-2">庫存</h2>
-          <ul className="space-y-1 text-[12px]">
-            {Object.entries(stock)
-              .filter(([, q]) => q > 0)
-              .sort(([a], [b]) => a.localeCompare(b))
-              .map(([id, q]) => (
-                <li key={id} className={`flex justify-between gap-2 px-1 py-0.5 border-b border-dashed border-slate-100 transition-colors ${flashIds.has(id) ? 'bg-emerald-100 text-emerald-900' : ''}`}>
-                  <span>{byId[id]?.name.zh ?? id}</span>
-                  <span className="tabular-nums font-semibold">{q}</span>
-                </li>
-              ))}
-          </ul>
-        </section>
-      </main>
-      <footer className="text-center text-xs text-slate-400 py-5 px-4">
-        示意圖 demo · 重整頁面庫存仍保留 · 遠端模式加 <code className="text-slate-500">?api=1</code>
+            ) : inventory.isError ? (
+              <p className="text-sm text-muted-foreground">庫存讀取失敗。</p>
+            ) : !stockRows.length ? (
+              <EmptyState
+                className="py-6"
+                title="庫存是空的"
+                description="按「重置庫存」還原種子資料。"
+                action={
+                  <Button size="sm" type="button" onClick={() => resetMut.mutate()}>
+                    重置庫存
+                  </Button>
+                }
+              />
+            ) : (
+              <ul className="space-y-1 text-xs">
+                {stockRows.map(([id, q]) => (
+                  <li
+                    key={id}
+                    className={`flex justify-between gap-2 border-b border-dashed border-border px-1 py-0.5 ${
+                      flashIds.has(id) ? 'bg-secondary text-foreground' : ''
+                    }`}
+                  >
+                    <span>{byId[id]?.name.zh ?? id}</span>
+                    <span className="font-semibold tabular-nums">{q}</span>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </CardContent>
+        </Card>
+      </div>
+      <footer className="px-4 py-5 text-center text-xs text-muted-foreground">
+        示意圖 demo · 重整頁面庫存仍保留 · 遠端模式加 <code className="font-mono">?api=1</code>
       </footer>
-    </div>
+    </StationShell>
   );
 }
 
-createRoot(document.getElementById('root')!).render(
-  <QueryClientProvider client={qc}><Atelier /></QueryClientProvider>
+boot(
+  <QueryClientProvider client={qc}>
+    <Atelier />
+  </QueryClientProvider>,
 );

@@ -1,7 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { createRoot } from 'react-dom/client';
-import { VirtualList } from '@is_tess/components';
-import '@is_tess/tokens/css/verdant.css';
+import { Button, Card, CardContent, CardHeader, CardTitle, VirtualList } from '@is_tess/components';
+import { StationShell, boot } from '../lib/shell';
 import '../index.css';
 
 type Row = { id: number; label: string; val: number; species: string };
@@ -19,13 +18,14 @@ function build(n: number): Row[] {
 
 function RowView({ r }: { r: Row }) {
   return (
-    <div className="flex h-full items-center justify-between border-b border-leaf-100 px-3 text-[13px]">
+    <div className="flex h-full items-center justify-between border-b border-border px-3 text-sm">
       <span>
         {r.species} {r.label}
       </span>
       <span
-        className="h-1.5 rounded bg-gradient-to-r from-leaf-500 to-emerald-400"
+        className="h-1.5 rounded bg-primary"
         style={{ width: r.val }}
+        aria-hidden
       />
     </div>
   );
@@ -83,61 +83,71 @@ function Meadow() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-leaf-50 to-white text-soil-900" data-app="verdant">
-      <div className="fixed top-3 right-4 rounded-lg border border-leaf-100 bg-white/80 px-3 py-1.5 text-sm shadow-sm">
-        FPS{' '}
-        <b className={`tabular-nums ${fps < 40 ? 'text-rose-500' : 'text-leaf-600'}`}>{fps}</b>
+    <StationShell
+      title="花圃效能實驗室"
+      description="全量 DOM vs VirtualList · 洩漏示範 · 會卡住分頁是預期行為"
+      actions={
+        <span className="rounded-lg border border-border bg-card px-3 py-1.5 text-sm">
+          FPS <b className={`tabular-nums ${fps < 40 ? 'text-destructive' : 'text-foreground'}`}>{fps}</b>
+        </span>
+      }
+    >
+      <div className="mb-4 flex flex-wrap items-center gap-2">
+        <Button
+          type="button"
+          size="sm"
+          variant={mode === 'naive' ? 'default' : 'outline'}
+          aria-pressed={mode === 'naive'}
+          onClick={() => setMode('naive')}
+        >
+          全量渲染（卡頓）
+        </Button>
+        <Button
+          type="button"
+          size="sm"
+          variant={mode === 'virtual' ? 'default' : 'outline'}
+          aria-pressed={mode === 'virtual'}
+          onClick={() => setMode('virtual')}
+        >
+          VirtualList（流暢）
+        </Button>
+        <span className="ml-1 text-xs text-muted-foreground">資料量</span>
+        {[5000, 20000, 50000].map((n) => (
+          <Button
+            key={n}
+            type="button"
+            size="sm"
+            variant={count === n ? 'secondary' : 'outline'}
+            aria-pressed={count === n}
+            onClick={() => setCount(n)}
+          >
+            {n / 1000}k
+          </Button>
+        ))}
       </div>
-      <div className="mx-auto max-w-5xl p-6">
-        <h1 className="text-xl font-bold">花圃效能實驗室</h1>
-        <p className="mt-1 text-sm text-slate-500">
-          全量渲染 vs <code>@is_tess/components</code> VirtualList · 即時 FPS · 記憶體洩漏示範
-        </p>
 
-        <div className="my-4 flex flex-wrap items-center gap-2.5">
-          <button
-            onClick={() => setMode('naive')}
-            className={`rounded-lg border px-4 py-2 text-sm ${mode === 'naive' ? 'border-leaf-500 bg-leaf-500 text-white' : 'border-leaf-100 bg-white'}`}
-          >
-            全量渲染（卡頓）
-          </button>
-          <button
-            onClick={() => setMode('virtual')}
-            className={`rounded-lg border px-4 py-2 text-sm ${mode === 'virtual' ? 'border-leaf-500 bg-leaf-500 text-white' : 'border-leaf-100 bg-white'}`}
-          >
-            VirtualList（流暢）
-          </button>
-          <span className="ml-2 text-xs text-slate-400">資料量</span>
-          {[5000, 20000, 50000].map((n) => (
-            <button
-              key={n}
-              onClick={() => setCount(n)}
-              className={`rounded-lg border px-3 py-2 text-sm ${count === n ? 'border-leaf-300 bg-leaf-100 text-leaf-700' : 'border-leaf-100 bg-white'}`}
-            >
-              {n / 1000}k
-            </button>
-          ))}
-        </div>
-
-        <div className="grid gap-5 md:grid-cols-2">
-          <div className="rounded-2xl border border-leaf-100 bg-white p-4 shadow-sm">
-            <h3 className="mb-1 text-sm font-bold">列表渲染</h3>
-            <p className="mb-2 text-xs text-slate-500">
+      <div className="grid gap-5 md:grid-cols-2">
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-sm">列表渲染</CardTitle>
+            <p className="text-xs text-muted-foreground">
               {mode === 'virtual'
                 ? 'VirtualList：只掛可視窗列。'
-                : `全量渲染：一次塞入 ${data.length.toLocaleString()} 節點。`}
+                : `全量渲染：一次塞入 ${data.length.toLocaleString()} 節點，可能讓分頁無回應。`}
             </p>
+          </CardHeader>
+          <CardContent>
             {mode === 'virtual' ? (
               <VirtualList
                 items={data}
                 height={H}
                 estimateSize={ROW_H}
-                className="rounded-xl border border-leaf-100 bg-leaf-50/40"
+                className="rounded-xl border border-border bg-muted/40"
                 getItemKey={(r) => r.id}
                 renderItem={(r) => <RowView r={r} />}
               />
             ) : (
-              <div className="relative h-[380px] overflow-auto rounded-xl border border-leaf-100 bg-leaf-50/40">
+              <div className="relative h-[380px] overflow-auto rounded-xl border border-border bg-muted/40">
                 {data.map((r) => (
                   <div key={r.id} style={{ height: ROW_H }}>
                     <RowView r={r} />
@@ -145,35 +155,38 @@ function Meadow() {
                 ))}
               </div>
             )}
-          </div>
+          </CardContent>
+        </Card>
 
-          <div className="rounded-2xl border border-leaf-100 bg-white p-4 shadow-sm">
-            <h3 className="mb-1 text-sm font-bold">記憶體洩漏示範</h3>
-            <p className="mb-3 text-xs text-slate-500">
-              每秒 push 大陣列並掛上不移除的 listener。開 DevTools › Memory 觀察 Heap。
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-sm">記憶體洩漏示範</CardTitle>
+            <p className="text-xs text-muted-foreground">
+              每秒 push 大陣列並掛上不移除的 listener。開 DevTools › Memory 觀察 Heap。只在本機分頁生效。
             </p>
-            <div className="flex gap-2.5">
-              <button onClick={startLeak} className="rounded-lg border border-rose-100 bg-rose-50 px-4 py-2 text-sm text-rose-500">
+          </CardHeader>
+          <CardContent>
+            <div className="flex flex-wrap gap-2">
+              <Button type="button" size="sm" variant="outline" onClick={startLeak}>
                 開始洩漏
-              </button>
-              <button onClick={stopLeak} className="rounded-lg border border-leaf-100 bg-white px-4 py-2 text-sm">
+              </Button>
+              <Button type="button" size="sm" variant="secondary" onClick={stopLeak}>
                 停止並清除
-              </button>
+              </Button>
             </div>
-            <div className="mt-3 border-t border-dashed border-leaf-100 pt-3 text-[13px] text-slate-500">
-              已洩漏區塊 <b className="tabular-nums text-soil-900">{leakN}</b> · 估計{' '}
-              <b className="tabular-nums text-soil-900">{(leakN * 1.6).toFixed(1)}</b> MB
+            <div className="mt-3 border-t border-dashed border-border pt-3 text-sm text-muted-foreground" aria-live="polite">
+              已洩漏區塊 <b className="tabular-nums text-foreground">{leakN}</b> · 估計{' '}
+              <b className="tabular-nums text-foreground">{(leakN * 1.6).toFixed(1)}</b> MB
               <br />
-              <span className={leakOn ? 'text-rose-500' : 'text-leaf-600'}>
+              <span className={leakOn ? 'text-destructive' : 'text-foreground'}>
                 {leakOn ? '洩漏中…' : '閒置 / 已清除'}
               </span>
             </div>
-          </div>
-        </div>
+          </CardContent>
+        </Card>
       </div>
-    </div>
+    </StationShell>
   );
 }
 
-document.documentElement.setAttribute('data-app', 'verdant');
-createRoot(document.getElementById('root')!).render(<Meadow />);
+boot(<Meadow />);
