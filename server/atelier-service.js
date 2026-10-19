@@ -87,4 +87,4 @@ const server = http.createServer(async (req, res) => {
   res.writeHead(404); res.end('Not found');
 });
 
-server.listen(PORT, () => console.log('READY atelier on ' + PORT));
+server.listen(PORT, '127.0.0.1', () => console.log('READY atelier on ' + PORT));

@@ -6,6 +6,7 @@ import { fileURLToPath } from 'url';
 import { spawn } from 'child_process';
 import { WsServer } from './miniws.js';
 import { serveStatic } from './static.js';
+import { allowServiceControl } from './control-access.js';
 import registry from './services.config.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -14,6 +15,7 @@ const DIST = path.join(ROOT, 'dist');
 const PORT = Number(process.env.PORT) || 4000;
 /** Single-port public host (Render): open links use same-origin /{id}.html */
 const HOSTED = process.env.HOSTED === '1' || process.env.HOSTED === 'true';
+const BIND_HOST = process.env.BIND_HOST || (HOSTED ? '0.0.0.0' : '127.0.0.1');
 const PUBLIC_BASE = (process.env.PUBLIC_BASE_URL || '').replace(/\/$/, '');
 
 const state = {};
@@ -141,6 +143,7 @@ const server = http.createServer((req, res) => {
   if (url === '/api/services') return json(res, 200, snapshot());
   const m = url.match(/^\/api\/services\/([\w-]+)\/(start|stop)$/);
   if (m && req.method === 'POST') {
+    if (!allowServiceControl(req)) return json(res, 403, { error: 'forbidden' });
     const [, id, action] = m;
     if (!svc(id)) return json(res, 404, { error: 'not found' });
     return json(res, 200, action === 'start' ? startService(id) : stopService(id));
@@ -167,6 +170,9 @@ function shutdown() {
 }
 process.on('SIGINT', shutdown);
 process.on('SIGTERM', shutdown);
-server.listen(PORT, () => {
-  console.log(`\n  Verdant Platform：http://localhost:${PORT}  hosted=${HOSTED}\n`);
+server.listen(PORT, BIND_HOST, () => {
+  console.log(`\n  Verdant Platform：http://localhost:${PORT}  bind=${BIND_HOST} hosted=${HOSTED}\n`);
+  if (HOSTED) {
+    for (const s of registry) startService(s.id);
+  }
 });
