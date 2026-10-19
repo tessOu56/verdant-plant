@@ -313,7 +313,11 @@ function Atelier() {
                   <p>{selected.science.summary}</p>
                   <div className="mt-3 flex flex-wrap gap-1.5">
                     {selected.science.mechanisms.map((m) => (
-                      <span key={m} className="rounded-md bg-background/20 px-2 py-0.5 text-[10px] text-background">
+                      <span
+                        key={m}
+                        className="rounded-md px-2 py-0.5 text-[10px]"
+                        style={{ background: 'rgba(243, 250, 244, 0.16)', color: 'var(--text-inverse, #f3faf4)' }}
+                      >
                         {m}
                       </span>
                     ))}
