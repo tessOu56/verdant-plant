@@ -58,4 +58,4 @@ ws.on('connection', (conn) => {
   conn.on('close', () => clearInterval(hb));
 });
 
-server.listen(PORT, () => console.log('READY garden on ' + PORT));
+server.listen(PORT, '127.0.0.1', () => console.log('READY garden on ' + PORT));

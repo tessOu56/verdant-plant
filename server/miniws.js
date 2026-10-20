@@ -3,11 +3,15 @@ import crypto from 'crypto';
 import { EventEmitter } from 'events';
 const GUID = '258EAFA5-E914-47DA-95CA-C5AB0DC85B11';
 const accept = (k) => crypto.createHash('sha1').update(k + GUID).digest('base64');
+const MAX_BUFFER = 1024 * 1024;
+const MAX_FRAME = 64 * 1024;
 
 class WsConnection extends EventEmitter {
   constructor(socket) { super(); this.socket = socket; this._buf = Buffer.alloc(0);
     socket.on('data', (d) => this._onData(d)); socket.on('close', () => this.emit('close')); socket.on('error', () => {}); }
-  _onData(chunk) { this._buf = Buffer.concat([this._buf, chunk]); let f;
+  _onData(chunk) {
+    if (this._buf.length + chunk.length > MAX_BUFFER) { this.close(); return; }
+    this._buf = Buffer.concat([this._buf, chunk]); let f;
     while ((f = this._parse())) {
       if (f.opcode === 0x8) { this.close(); return; }
       else if (f.opcode === 0x9) this._send(0xA, f.payload);
@@ -16,6 +20,7 @@ class WsConnection extends EventEmitter {
     const opcode = b[0] & 0x0f, masked = (b[1] & 0x80) !== 0; let len = b[1] & 0x7f, off = 2;
     if (len === 126) { if (b.length < 4) return null; len = b.readUInt16BE(2); off = 4; }
     else if (len === 127) { if (b.length < 10) return null; len = Number(b.readBigUInt64BE(2)); off = 10; }
+    if (!Number.isFinite(len) || len > MAX_FRAME) { this.close(); return null; }
     let mask; if (masked) { if (b.length < off + 4) return null; mask = b.subarray(off, off + 4); off += 4; }
     if (b.length < off + len) return null; let p = b.subarray(off, off + len);
     if (masked) { const o = Buffer.allocUnsafe(len); for (let i = 0; i < len; i++) o[i] = p[i] ^ mask[i & 3]; p = o; }
